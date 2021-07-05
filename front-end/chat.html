@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/chat.css">
+    <script src="./js/jquery-2.1.0.js"></script>
+    <style>
+        .mine {
+            text-align: right;
+        }
+
+        .noMine {
+            text-align: left;
+        }
+
+        .record {
+            max-height: 68%;
+            height: 68%;
+            overflow: scroll;
+        }
+
+        .chat_input {}
+    </style>
+</head>
+
+<body>
+    <div class="chat">
+        <div class="chat_left">
+            <div>查看附近的人></div>
+            <div class="contract">
+
+            </div>
+        </div>
+        <div class="chat_right">
+            <div class="record">
+
+            </div>
+            <div class="chat_input">
+                <textarea name="" id="sendMessage" cols="60" rows="10" maxlength="100"></textarea>
+                <button id="sendBtn">发送</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var knowChat = "";
+        var uId = "";
+        var webSocket = null;
+        $('#sendBtn').click(function () {
+                var msg = $('#sendMessage').val();
+                webSocket.send(msg);
+                $('#sendMessage').val('');
+            });
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i].trim();
+                if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            }
+            return "";
+        }
+
+        function getRecord(revicer) {
+            var url = `ws://localhost:8080/chat/${uId}/${revicer}`;
+            //进入聊天室
+            webSocket = new WebSocket(url);
+            webSocket.onopen = function () {
+                console.log('webSocket连接创建。。。');
+            }
+            webSocket.onclose = function () {
+                console.log("close")
+            }
+            webSocket.onmessage = function (event) {
+                console.log(event.data)
+                const obj = JSON.parse(event.data);
+                if (obj.closeMsg == "close") {
+                    window.location.href = "./mate.html"
+                }
+                if (obj.sender != uId) {
+                    console.log("----------")
+                    $(".record").append(`<div class="noMine">${obj.message}</div>`)
+                } else {
+                    console.log("------++++++++++----")
+                    $(".record").append(`<div class="mine">${obj.message}</div>`)
+                }
+            }
+            webSocket.onerror = function (event) {
+                console.log('webSocket连接异常。。。');
+            }
+            
+            $.ajax({
+                url: "http://localhost:8080/record",
+                dataType: "json",
+                data: {
+                    "sender": uId,
+                    "revicer": revicer
+                },
+                type: "POST",
+                success: function (response) {
+                    $(".record").html("")
+                    response.data.forEach(element => {
+                        if (element.send == uId) {
+                            $(".record").append(`
+                            <div class="mine">${element.message}</div>
+                        `)
+                        } else {
+                            $(".record").append(`
+                            <div class="noMine">${element.message}</div>
+                        `)
+                        }
+
+                    });
+                    console.log(response)
+                },
+                error: function (res) {
+                    alert("系统错误")
+                    console.log(res);
+                }
+            })
+
+        }
+        $(function () {
+            $.ajaxSetup({
+                async: false
+            });
+            uId = getCookie("u_id");
+            $.ajax({
+                url: `http://localhost:8080/knowChat?uId=${uId}`,
+                dataType: "json",
+                type: "GET",
+                success: function (response) {
+                    knowChat = response;
+                    response.data.forEach(element => {
+                        $(".contract").append(`
+                   <div class="chat_item" onclick="getRecord(${element.uId})">
+                    <div>
+                        <img src="${element.img_url}" alt="">
+                    </div>
+                    <div>
+                        <div>${element.name}</div>
+                        <div>${element.records.message}</div>
+                    </div>
+                </div>
+                   `)
+                    });
+
+                },
+                error: function (res) {
+                    alert("系统错误")
+                    console.log(res);
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

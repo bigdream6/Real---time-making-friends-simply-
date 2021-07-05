@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="./js/jquery-2.1.0.js"></script>
+</head>
+
+<body>
+    <div class="head">
+        <div class="con">
+            <div onclick="goMate()">匹配</div>
+            <div onclick="goChat()">聊天</div>
+           
+        </div>
+    </div>
+
+
+    <iframe id="frame" height="100%" width="100%" src="./start.html" border="0" frameborder="0"
+        scrolling="auto"></iframe>
+    <script>
+        function goChat() {
+            document.getElementById("frame").src = "./chat.html"
+        }
+
+        function goMate() {
+            document.getElementById("frame").src = "./start.html"
+        }
+
+        function gotrends() {
+            document.getElementById("frame").src = "./trends.html"
+        }
+    </script>
+</body>
+
+</html>

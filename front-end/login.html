@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/jquery-2.1.0.js"></script>
+</head>
+
+<body>
+
+    <input type="text" name="name" id="name">
+    <input type="text" name="password" id="password">
+    <input type="submit" value="提交" onclick="login()">
+    <script>
+        function login() {
+            $.ajax({
+                url: "http://localhost:8080/login",
+                dataType: "json",
+                type: "POST",
+                data: {
+                    name: $("#name").val(),
+                    password: $("#password").val()
+                },
+                success: function (response) {
+
+                    if (response.code == "200") {
+
+                        var Days = 30;
+                        var exp = new Date();
+                        exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+                        document.cookie = "u_id" + "=" + escape(response.data.u_id) + ";expires=" + exp
+                            .toGMTString();
+                            window.location.href = "index.html"
+
+                    } else {
+                        alert("无此用户")
+                    }
+                },
+                error: function (res) {
+                    alert("系统错误")
+                    console.log(res);
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>

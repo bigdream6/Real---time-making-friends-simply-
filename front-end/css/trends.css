@@ -1,0 +1,38 @@
+body,html{
+    height: 100vh;
+    background: #222222;
+}
+.trends{
+    display: flex;
+    justify-content: space-between;
+    height: 100vh;
+}
+.treads_left{
+    width: 60%;
+    height: 100%;
+    overflow: hidden;
+}
+.treads_right{
+    width: 40%;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+
+}
+.treads_right>div:nth-child(1){
+    position: relative;
+    height: 100%;
+    width: 10%;
+}
+.treads_right>div:nth-child(1)>i{
+    position: absolute;
+    bottom: 150px;
+    left: 10px;
+}
+.treads_right>div:nth-child(1)>i:nth-child(3){
+    bottom: 120px;
+    left: 10px;
+}
+.treads_right i:hover{
+    color: white;
+}

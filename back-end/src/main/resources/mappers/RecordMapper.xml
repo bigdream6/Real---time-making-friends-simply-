@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.geng.dao.RecordDao">
+    <insert id="saveRecord" >
+        insert into chat_record(send,revicer,message) values(#{from},#{to}, #{msg} );
+    </insert>
+    <select id="getRecordCount" resultType="java.util.Map">
+       select count(*) infor1,(select count(*) from  chat_record where send = #{from} and revicer = #{to} ) infor2 from chat_record where send = #{to} and revicer =#{from};
+    </select>
+    <delete id="delRecord" >
+        delete from chat_record where (send = #{from} and revicer = #{to}) or(send = #{to} and revicer = #{from});
+    </delete>
+    <select id="getRecord" resultType="java.util.Map">
+        select * from chat_record where (send = #{sender} or revicer = #{sender}) and (send = #{revicer} or revicer = #{revicer} )
+    </select>
+    <select id="knowChat" resultType="java.util.Map">
+        select c.send, c.revicer   from  chat_record  c, user_infor u where  (c.send = u.u_id or c.revicer = u.u_id) and u.u_id =2  group by  c.revicer;
+    </select>
+</mapper>

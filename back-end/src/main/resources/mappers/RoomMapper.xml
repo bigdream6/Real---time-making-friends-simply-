@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.geng.dao.RoomDao">
+    <select id="getRoomId" resultType="String">
+        select r_id from room where is_full = 0;
+    </select>
+    <insert id="saveNewRoom" parameterType="String">
+        insert into room values(#{r_id},0);
+    </insert>
+    <update id="updateRoomStatus" parameterType="String">
+        update room set is_full = 1 where r_id = #{r_id}
+    </update>
+    <delete id="removeRoom" parameterType="String">
+        delete from room where r_id = #{rId}
+    </delete>
+</mapper>
